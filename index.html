@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Card Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;700&family=Hind+Siliguri:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="poster-container" id="posterArea">
+        <canvas id="newsCanvas" width="800" height="600"></canvas>
+    </div>
+
+    <div class="controls-container">
+        <h2>Poster Controls</h2>
+
+        <div class="input-group">
+            <label>Upload Background Image (optional)</label>
+            <input type="file" id="imageLoader" accept="image/*">
+        </div>
+
+        <div class="input-group">
+            <label>Upload Logo (optional)</label>
+            <input type="file" id="logoLoader" accept="image/*">
+        </div>
+
+        <div class="input-group">
+            <label>Main Headline (Green)</label>
+            <textarea id="mainHeadline" placeholder="আইপিএল-এর আগে সুখবর..."></textarea>
+        </div>
+
+        <div class="input-group">
+            <label>Sub Headline (Yellow)</label>
+            <textarea id="subHeadline" placeholder="বড় ঘোষণা নাইট রাইডার্সের"></textarea>
+        </div>
+
+        <div class="input-group">
+            <label>Facebook Page Name</label>
+            <input type="text" id="fbPageName" placeholder="Your Page Name">
+        </div>
+        
+        <div class="input-group">
+            <label>Quote/Quote Author (optional)</label>
+            <textarea id="quoteText" placeholder="Ukti/Author Name"></textarea>
+        </div>
+
+
+        <div class="input-group">
+            <label>Font (Bengali)</label>
+            <select id="fontSelect">
+                <option value="'Noto Serif Bengali', serif">Noto Serif (Traditional)</option>
+                <option value="'Hind Siliguri', sans-serif">Hind Siliguri (Modern)</option>
+            </select>
+        </div>
+
+        <div class="color-controls">
+            <div class="input-group color-pick">
+                <label>Headline Color</label>
+                <input type="color" id="headlineColor" value="#00FF00"> </div>
+            <div class="input-group color-pick">
+                <label>Sub Color</label>
+                <input type="color" id="subHeadlineColor" value="#FFFF00"> </div>
+             <div class="input-group color-pick">
+                <label>Header/Text BG Color</label>
+                <input type="color" id="textBgColor" value="#FFFFFF"> </div>
+        </div>
+
+        <button id="downloadBtn" class="download-btn">Download Image</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+
