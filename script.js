@@ -12,11 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const posYInput = document.getElementById('imagePosY');
     const zoomValLabel = document.getElementById('zoomVal');
 
-    // Input elements
-    const inputs = ['mainHeadline', 'subHeadline', 'fbPageName', 'quoteText', 'fontSelect', 'headlineColor', 'subHeadlineColor'];
+    // Inputs IDs for simple text/style change
+    const textInputs = ['mainHeadline', 'subHeadline', 'fbPageName', 'quoteText', 'fontSelect', 'headlineColor', 'subHeadlineColor'];
 
-    // State
-    let bgImage = null;
+    // Global image object
+    let bgImage = new Image();
+    let isImageLoaded = false;
 
     // --- Core Draw Function ---
     function draw() {
@@ -25,52 +26,57 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // 2. Draw Image (Zoom & Slide)
-        if (bgImage) {
+        if (isImageLoaded) {
             ctx.save();
             
             const scale = parseFloat(scaleInput.value);
             const posX = parseInt(posXInput.value);
             const posY = parseInt(posYInput.value);
             
-            // Canvas-er center-e image-ke niye asha
+            // Image center positioning logic
             ctx.translate(canvas.width / 2 + posX, canvas.height / 2 + posY);
             ctx.scale(scale, scale);
             
-            // Image-er center point calculation jate zoom majhkhan theke hoy
-            ctx.drawImage(bgImage, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+            // Aspect Ratio maintain kore draw kora
+            const imgWidth = canvas.width;
+            const imgHeight = (bgImage.height / bgImage.width) * canvas.width;
+            
+            ctx.drawImage(bgImage, -imgWidth / 2, -imgHeight / 2, imgWidth, imgHeight);
             
             ctx.restore();
         }
 
-        // 3. Bottom Gradient (Overlay)
-        const grad = ctx.createLinearGradient(0, 350, 0, 600);
+        // 3. Frame Overlay (Bottom Gradient)
+        const grad = ctx.createLinearGradient(0, 300, 0, 600);
         grad.addColorStop(0, "transparent");
-        grad.addColorStop(1, "rgba(0,0,0,0.85)");
+        grad.addColorStop(1, "rgba(0,0,0,0.9)");
         ctx.fillStyle = grad;
         ctx.fillRect(0, 300, canvas.width, 300);
 
-        // 4. Draw Texts (Fixed Frame)
+        // 4. Texts Drawing (Fixed Position)
         const font = document.getElementById('fontSelect').value;
         const centerX = canvas.width / 2;
         ctx.textAlign = "center";
 
-        // Quote
-        ctx.fillStyle = "#ccc";
-        ctx.font = `italic 20px ${font}`;
-        ctx.fillText(document.getElementById('quoteText').value, centerX, 440);
+        // Quote / Author
+        const quote = document.getElementById('quoteText').value;
+        if(quote){
+            ctx.fillStyle = "#ccc";
+            ctx.font = `italic 20px ${font}`;
+            ctx.fillText(quote, centerX, 440);
+        }
 
-        // Main Headline
+        // Main Headline (Green)
         ctx.fillStyle = document.getElementById('headlineColor').value;
         ctx.font = `bold 46px ${font}`;
-        const mainH = document.getElementById('mainHeadline').value;
-        wrapText(ctx, mainH, centerX, 500, 740, 52);
+        wrapText(ctx, document.getElementById('mainHeadline').value, centerX, 500, 740, 52);
 
-        // Sub Headline
+        // Sub Headline (Yellow)
         ctx.fillStyle = document.getElementById('subHeadlineColor').value;
         ctx.font = `bold 28px ${font}`;
         ctx.fillText(document.getElementById('subHeadline').value, centerX, 570);
 
-        // 5. Top Bar Branding
+        // 5. Branding Bar (Fixed)
         ctx.fillStyle = "#fff";
         ctx.fillRect(0, 0, canvas.width, 45);
         ctx.fillStyle = "#333";
@@ -78,12 +84,12 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.textAlign = "right";
         ctx.fillText("f | " + document.getElementById('fbPageName').value, canvas.width - 20, 28);
         
-        // Bottom Red Bar
+        // Red Bottom Line
         ctx.fillStyle = "red";
         ctx.fillRect(0, 590, canvas.width, 10);
     }
 
-    // Wrap Text Function
+    // Text Wrap Logic
     function wrapText(context, text, x, y, maxWidth, lineHeight) {
         let words = text.split(' ');
         let line = '';
@@ -98,20 +104,24 @@ document.addEventListener('DOMContentLoaded', () => {
         context.fillText(line, x, y);
     }
 
-    // --- Listeners ---
+    // --- Image Upload Event (Security Fixed) ---
     imageLoader.addEventListener('change', (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                bgImage = new Image();
-                bgImage.onload = draw;
-                bgImage.src = event.target.result;
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            bgImage = new Image();
+            bgImage.onload = () => {
+                isImageLoaded = true;
+                draw(); // Image load holei draw hobe
             };
-            reader.readAsDataURL(file);
-        }
+            bgImage.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
     });
 
+    // Adjustment Sliders
     [scaleInput, posXInput, posYInput].forEach(el => {
         el.addEventListener('input', () => {
             zoomValLabel.innerText = parseFloat(scaleInput.value).toFixed(1);
@@ -119,17 +129,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    inputs.forEach(id => {
+    // Text Inputs
+    textInputs.forEach(id => {
         document.getElementById(id).addEventListener('input', draw);
     });
 
+    // Download Image
     downloadBtn.addEventListener('click', () => {
         const link = document.createElement('a');
-        link.download = 'news_card.png';
-        link.href = canvas.toDataURL();
+        link.download = 'news_card_fixed.png';
+        link.href = canvas.toDataURL('image/png');
         link.click();
     });
 
-    // Initial
+    // Initial Empty Draw
     draw();
 });
+                          
