@@ -6,186 +6,130 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageLoader = document.getElementById('imageLoader');
     const downloadBtn = document.getElementById('downloadBtn');
     
-    // Sliders & Label
+    // Sliders
     const scaleInput = document.getElementById('imageScale');
     const posXInput = document.getElementById('imagePosX');
     const posYInput = document.getElementById('imagePosY');
     const zoomValLabel = document.getElementById('zoomVal');
 
-    // Text & Font inputs
-    const mainHeadlineInput = document.getElementById('mainHeadline');
-    const subHeadlineInput = document.getElementById('subHeadline');
-    const fbPageNameInput = document.getElementById('fbPageName');
-    const quoteTextInput = document.getElementById('quoteText');
-    const fontSelectInput = document.getElementById('fontSelect');
-    const headlineColorInput = document.getElementById('headlineColor');
-    const subHeadlineColorInput = document.getElementById('subHeadlineColor');
+    // Input elements
+    const inputs = ['mainHeadline', 'subHeadline', 'fbPageName', 'quoteText', 'fontSelect', 'headlineColor', 'subHeadlineColor'];
 
-    // State Variables for Photo Adjustment
+    // State
     let bgImage = null;
-    let scale = 1.0;
-    let posX = 0;
-    let posY = 0;
 
-    // --- Dynamic Draw Function with Fixed Framing ---
-    function drawPoster() {
-        // 1. Clear Canvas (Black Background)
+    // --- Core Draw Function ---
+    function draw() {
+        // 1. Clear & Fill Black Background
         ctx.fillStyle = "#000000";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // --- DRAW PHOTO (ZOOMABLE & SLIDEABLE) ---
+        // 2. Draw Image (Zoom & Slide)
         if (bgImage) {
-            ctx.save(); // Save the state before transforming
+            ctx.save();
             
-            // Image centering logic
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-
-            // Apply transformations: Translate to center -> Scale (Zoom) -> Translate by X/Y Move
-            ctx.translate(centerX, centerY);
+            const scale = parseFloat(scaleInput.value);
+            const posX = parseInt(posXInput.value);
+            const posY = parseInt(posYInput.value);
+            
+            // Canvas-er center-e image-ke niye asha
+            ctx.translate(canvas.width / 2 + posX, canvas.height / 2 + posY);
             ctx.scale(scale, scale);
-            ctx.translate(-centerX + posX, -centerY + posY);
             
-            // Draw the image within the transformed coordinate system
-            ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+            // Image-er center point calculation jate zoom majhkhan theke hoy
+            ctx.drawImage(bgImage, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
             
-            ctx.restore(); // Restore the state, resetting the scale/translate for framing
+            ctx.restore();
         }
 
-        // --- DRAW FIXED FRAMING & TEXTS ---
-        
-        // 2. Draw Top White/Logo Bar (Fixed)
-        const headerHeight = 50;
-        ctx.fillStyle = "#FFFFFF"; // Logo area background
-        ctx.fillRect(0, 0, canvas.width, headerHeight);
+        // 3. Bottom Gradient (Overlay)
+        const grad = ctx.createLinearGradient(0, 350, 0, 600);
+        grad.addColorStop(0, "transparent");
+        grad.addColorStop(1, "rgba(0,0,0,0.85)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 300, canvas.width, 300);
 
-        // Logo Placement (Fixed)
-        // [Add logo drawing logic here if a file is uploaded]
-        ctx.fillStyle = "#000"; // Black placeholder
-        ctx.fillRect(10, 5, 40, 40);
+        // 4. Draw Texts (Fixed Frame)
+        const font = document.getElementById('fontSelect').value;
+        const centerX = canvas.width / 2;
+        ctx.textAlign = "center";
 
-        // Facebook Section (Fixed, Right)
-        ctx.fillStyle = "#1877F2"; // FB Blue
-        ctx.beginPath();
-        ctx.arc(canvas.width - 25, 25, 15, 0, 2 * Math.PI);
-        ctx.fill();
-         
-        ctx.fillStyle = "#333"; // Text color
+        // Quote
+        ctx.fillStyle = "#ccc";
+        ctx.font = `italic 20px ${font}`;
+        ctx.fillText(document.getElementById('quoteText').value, centerX, 440);
+
+        // Main Headline
+        ctx.fillStyle = document.getElementById('headlineColor').value;
+        ctx.font = `bold 46px ${font}`;
+        const mainH = document.getElementById('mainHeadline').value;
+        wrapText(ctx, mainH, centerX, 500, 740, 52);
+
+        // Sub Headline
+        ctx.fillStyle = document.getElementById('subHeadlineColor').value;
+        ctx.font = `bold 28px ${font}`;
+        ctx.fillText(document.getElementById('subHeadline').value, centerX, 570);
+
+        // 5. Top Bar Branding
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, 45);
+        ctx.fillStyle = "#333";
         ctx.font = "bold 16px Arial";
         ctx.textAlign = "right";
-        ctx.fillText("f " + fbPageNameInput.value, canvas.width - 50, 30);
-        ctx.textAlign = "left"; // Reset alignment for headlines
-
-        // 3. Draw Bottom Black Gradient Overlay (Fixed, for text readability)
-        const gradHeight = 250;
-        const gradY = canvas.height - gradHeight;
-        const grad = ctx.createLinearGradient(0, gradY, 0, canvas.height);
-        grad.addColorStop(0, "transparent");
-        grad.addColorStop(1, "rgba(0,0,0,0.9)"); // Smooth black fade
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, gradY, canvas.width, gradHeight);
-
-        // 4. Draw Bengali Headlines (Fixed, Centered Bottom)
-        const padding = 20;
-        const bottomY = canvas.height - padding;
-        const centerX = canvas.width / 2;
-        const selectedFont = fontSelectInput.value;
-        const mainColor = headlineColorInput.value;
-        const subColor = subHeadlineColorInput.value;
-
-        ctx.textAlign = "center"; // Center Headlines
-
-        // Sub Headline (Yellow, Fixed position)
-        ctx.fillStyle = subColor;
-        ctx.font = `bold 32px ${selectedFont}`;
-        ctx.fillText(subHeadlineInput.value, centerX, bottomY - 30);
-
-        // Main Headline (Green, Fixed position, with wrap)
-        ctx.fillStyle = mainColor;
-        ctx.font = `bold 48px ${selectedFont}`;
-        wrapCenterText(ctx, mainHeadlineInput.value, centerX, bottomY - 90, canvas.width - (padding * 2), 55);
+        ctx.fillText("f | " + document.getElementById('fbPageName').value, canvas.width - 20, 28);
         
-        // Quote / Author (Fixed position, small above headline)
-        ctx.fillStyle = "#CCCCCC";
-        ctx.font = `italic 20px ${selectedFont}`;
-        ctx.fillText(quoteTextInput.value, centerX, bottomY - 150);
-
-        // 5. Draw the Bottom Red Line (Fixed)
-        ctx.fillStyle = "#FF0000";
-        ctx.fillRect(0, canvas.height - 10, canvas.width, 10);
+        // Bottom Red Bar
+        ctx.fillStyle = "red";
+        ctx.fillRect(0, 590, canvas.width, 10);
     }
 
-    // --- Helper for Wrapping & Centering Bengali Text ---
-    function wrapCenterText(context, text, x, y, maxWidth, lineHeight) {
+    // Wrap Text Function
+    function wrapText(context, text, x, y, maxWidth, lineHeight) {
         let words = text.split(' ');
         let line = '';
-        let lines = [];
-
         for (let n = 0; n < words.length; n++) {
             let testLine = line + words[n] + ' ';
-            let metrics = context.measureText(testLine);
-            let testWidth = metrics.width;
-            if (testWidth > maxWidth && n > 0) {
-                lines.push(line);
+            if (context.measureText(testLine).width > maxWidth && n > 0) {
+                context.fillText(line, x, y);
                 line = words[n] + ' ';
-            } else {
-                line = testLine;
-            }
+                y += lineHeight;
+            } else { line = testLine; }
         }
-        lines.push(line);
-
-        for(let j = 0; j<lines.length; j++) {
-            context.fillText(lines[j], x, y - ((lines.length - 1 - j) * lineHeight));
-        }
+        context.fillText(line, x, y);
     }
 
-    // --- Event Listeners ---
-
-    // 1. Background Image Loader
+    // --- Listeners ---
     imageLoader.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = (event) => {
                 bgImage = new Image();
-                bgImage.onload = drawPoster;
+                bgImage.onload = draw;
                 bgImage.src = event.target.result;
             };
             reader.readAsDataURL(file);
         }
     });
 
-    // 2. Adjustments Sliders
-    [scaleInput, posXInput, posYInput].forEach(input => {
-        input.addEventListener('input', () => {
-            scale = parseFloat(scaleInput.value);
-            posX = parseInt(posXInput.value);
-            posY = parseInt(posYInput.value);
-            zoomValLabel.innerText = scale.toFixed(1);
-            drawPoster();
+    [scaleInput, posXInput, posYInput].forEach(el => {
+        el.addEventListener('input', () => {
+            zoomValLabel.innerText = parseFloat(scaleInput.value).toFixed(1);
+            draw();
         });
     });
 
-    // 3. Text & Style Inputs
-    const textAndStyleInputs = [
-        mainHeadlineInput, subHeadlineInput, fbPageNameInput, 
-        quoteTextInput, fontSelectInput, headlineColorInput, subHeadlineColorInput
-    ];
-    textAndStyleInputs.forEach(input => {
-        input.addEventListener('input', drawPoster);
+    inputs.forEach(id => {
+        document.getElementById(id).addEventListener('input', draw);
     });
 
-    // --- Download Function ---
     downloadBtn.addEventListener('click', () => {
         const link = document.createElement('a');
-        link.download = 'fixed-frame-news-card.png';
-        link.href = canvas.toDataURL('image/png');
+        link.download = 'news_card.png';
+        link.href = canvas.toDataURL();
         link.click();
     });
 
-    // Initial Draw (Wait for Bengali fonts)
-    document.fonts.load("1em Noto Serif Bengali").then(() => {
-        drawPoster();
-    });
+    // Initial
+    draw();
 });
-            
