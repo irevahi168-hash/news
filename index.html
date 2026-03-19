@@ -3,76 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News Card Generator</title>
+    <title>News Card Generator | Kabir Khan</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;700&family=Hind+Siliguri:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div class="main-wrapper">
-    <div class="poster-container" id="posterArea">
+    <div class="poster-container">
         <canvas id="newsCanvas" width="800" height="600"></canvas>
     </div>
 
     <div class="controls-container">
-        <h2>Poster Controls</h2>
+        <h2>News Card Editor</h2>
 
         <div class="input-group">
-            <label>Upload Background Image (optional)</label>
+            <label>Upload Main Photo</label>
             <input type="file" id="imageLoader" accept="image/*">
         </div>
 
-        <div class="input-group">
-            <label>Upload Logo (optional)</label>
-            <input type="file" id="logoLoader" accept="image/*">
+        <div class="adjustment-grid">
+            <div class="input-group">
+                <label>Zoom (<span id="zoomVal">1.0</span>x)</label>
+                <input type="range" id="imageScale" min="0.1" max="4" step="0.1" value="1">
+            </div>
+            <div class="input-group">
+                <label>Move Horizontal (X)</label>
+                <input type="range" id="imagePosX" min="-800" max="800" step="1" value="0">
+            </div>
+            <div class="input-group">
+                <label>Move Vertical (Y)</label>
+                <input type="range" id="imagePosY" min="-600" max="600" step="1" value="0">
+            </div>
         </div>
 
         <div class="input-group">
             <label>Main Headline (Green)</label>
-            <textarea id="mainHeadline" placeholder="আইপিএল-এর আগে সুখবর..."></textarea>
+            <textarea id="mainHeadline" placeholder="Headline likhun..."></textarea>
         </div>
 
         <div class="input-group">
             <label>Sub Headline (Yellow)</label>
-            <textarea id="subHeadline" placeholder="বড় ঘোষণা নাইট রাইডার্সের"></textarea>
+            <textarea id="subHeadline" placeholder="Bistadito likhun..."></textarea>
+        </div>
+
+        <div class="input-group">
+            <label>Quote / Author Name (Small)</label>
+            <input type="text" id="quoteText" placeholder="Ukti ba Nam...">
         </div>
 
         <div class="input-group">
             <label>Facebook Page Name</label>
-            <input type="text" id="fbPageName" placeholder="Your Page Name">
-        </div>
-        
-        <div class="input-group">
-            <label>Quote/Quote Author (optional)</label>
-            <textarea id="quoteText" placeholder="Ukti/Author Name"></textarea>
+            <input type="text" id="fbPageName" placeholder="Page Name">
         </div>
 
-
         <div class="input-group">
-            <label>Font (Bengali)</label>
+            <label>Choose Font</label>
             <select id="fontSelect">
                 <option value="'Noto Serif Bengali', serif">Noto Serif (Traditional)</option>
                 <option value="'Hind Siliguri', sans-serif">Hind Siliguri (Modern)</option>
             </select>
         </div>
 
-        <div class="color-controls">
-            <div class="input-group color-pick">
+        <div class="color-grid">
+            <div class="input-group">
                 <label>Headline Color</label>
-                <input type="color" id="headlineColor" value="#00FF00"> </div>
-            <div class="input-group color-pick">
+                <input type="color" id="headlineColor" value="#00FF00">
+            </div>
+            <div class="input-group">
                 <label>Sub Color</label>
-                <input type="color" id="subHeadlineColor" value="#FFFF00"> </div>
-             <div class="input-group color-pick">
-                <label>Header/Text BG Color</label>
-                <input type="color" id="textBgColor" value="#FFFFFF"> </div>
+                <input type="color" id="subColor" value="#FFFF00">
+            </div>
         </div>
 
-        <button id="downloadBtn" class="download-btn">Download Image</button>
+        <button id="downloadBtn" class="download-btn">Download News Card</button>
     </div>
 </div>
 
 <script src="script.js"></script>
 </body>
 </html>
-
