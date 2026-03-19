@@ -2,14 +2,11 @@ const canvas = document.getElementById('newsCanvas');
 const ctx = canvas.getContext('2d');
 
 let bgImage = null;
-let scale = 1.0;
-let posX = 0;
-let posY = 0;
 
-// Load Inputs
-const inputs = ['mainHeadline', 'subHeadline', 'fbPageName', 'quoteText', 'fontSelect', 'headlineColor', 'subColor', 'imageScale', 'imagePosX', 'imagePosY'];
+// Inputs trigger redraw
+const inputIds = ['mainHeadline', 'subHeadline', 'fbPageName', 'quoteText', 'fontSelect', 'headlineColor', 'subColor', 'imageScale', 'imagePosX', 'imagePosY'];
 
-inputs.forEach(id => {
+inputIds.forEach(id => {
     document.getElementById(id).addEventListener('input', () => {
         if(id === 'imageScale') document.getElementById('zoomVal').innerText = document.getElementById(id).value;
         draw();
@@ -31,6 +28,7 @@ function draw() {
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // 1. Background Image (Zoom & Slide)
     if (bgImage) {
         ctx.save();
         const centerX = canvas.width / 2;
@@ -42,58 +40,75 @@ function draw() {
         ctx.restore();
     }
 
-    // Bottom Gradient/Overlay for text readability
-    const grad = ctx.createLinearGradient(0, 400, 0, 600);
+    // 2. Black Overlay for Text Readability
+    const grad = ctx.createLinearGradient(0, 300, 0, 600);
     grad.addColorStop(0, "transparent");
-    grad.addColorStop(1, "black");
+    grad.addColorStop(1, "rgba(0,0,0,0.9)");
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 350, canvas.width, 250);
+    ctx.fillRect(0, 300, canvas.width, 300);
 
     const font = document.getElementById('fontSelect').value;
+    const centerX = canvas.width / 2; // Middle point
 
-    // Quote/Author
-    ctx.fillStyle = "#ccc";
-    ctx.font = `italic 20px ${font}`;
-    ctx.fillText(document.getElementById('quoteText').value, 30, 460);
+    // --- Text Alignment: CENTER ---
+    ctx.textAlign = "center";
 
-    // Main Headline
+    // 3. Quote / Author (Middle)
+    const quote = document.getElementById('quoteText').value;
+    if(quote) {
+        ctx.fillStyle = "#ccc";
+        ctx.font = `italic 20px ${font}`;
+        ctx.fillText(quote, centerX, 440);
+    }
+
+    // 4. Main Headline (Middle)
     ctx.fillStyle = document.getElementById('headlineColor').value;
-    ctx.font = `bold 45px ${font}`;
-    wrapText(ctx, document.getElementById('mainHeadline').value, 30, 510, 740, 50);
+    ctx.font = `bold 48px ${font}`;
+    wrapCenterText(ctx, document.getElementById('mainHeadline').value, centerX, 500, 740, 55);
 
-    // Sub Headline
+    // 5. Sub Headline (Middle)
     ctx.fillStyle = document.getElementById('subColor').value;
-    ctx.font = `bold 28px ${font}`;
-    ctx.fillText(document.getElementById('subHeadline').value, 30, 570);
+    ctx.font = `bold 30px ${font}`;
+    ctx.fillText(document.getElementById('subHeadline').value, centerX, 570);
 
-    // Facebook Section (Bottom Right)
+    // 6. Facebook Branding (Top Corner)
     ctx.fillStyle = "#fff";
     ctx.font = `bold 18px Arial`;
     ctx.textAlign = "right";
-    ctx.fillText("f " + document.getElementById('fbPageName').value, 770, 30);
-    ctx.textAlign = "left"; // Reset
+    ctx.fillText("f | " + document.getElementById('fbPageName').value, canvas.width - 20, 30);
 }
 
-function wrapText(context, text, x, y, maxWidth, lineHeight) {
+// Center-aligned text wrapping logic
+function wrapCenterText(context, text, x, y, maxWidth, lineHeight) {
     let words = text.split(' ');
     let line = '';
+    let lines = [];
+
     for (let n = 0; n < words.length; n++) {
         let testLine = line + words[n] + ' ';
         if (context.measureText(testLine).width > maxWidth && n > 0) {
-            context.fillText(line, x, y);
+            lines.push(line);
             line = words[n] + ' ';
-            y += lineHeight;
-        } else { line = testLine; }
+        } else {
+            line = testLine;
+        }
     }
-    context.fillText(line, x, y);
+    lines.push(line);
+
+    // Adjusting Y position to keep it centered vertically if multi-line
+    let startY = y - ((lines.length - 1) * lineHeight) / 2;
+
+    for(let k = 0; k < lines.length; k++) {
+        context.fillText(lines[k], x, startY + (k * lineHeight));
+    }
 }
 
 document.getElementById('downloadBtn').addEventListener('click', () => {
     const link = document.createElement('a');
-    link.download = 'NewsCard_Kabir.png';
-    link.href = canvas.toDataURL();
+    link.download = 'NewsCard_Centered.png';
+    link.href = canvas.toDataURL('image/png');
     link.click();
 });
 
-// Initial Load
 window.onload = draw;
+                
