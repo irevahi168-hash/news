@@ -1,23 +1,32 @@
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #1a1a1a;
-    color: #fff;
-    margin: 0; padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
 }
 
 .main-wrapper {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 1300px;
+    margin: auto;
 }
 
 .poster-container {
-    background: #000;
-    border: 4px solid #333;
-    border-radius: 10px;
+    flex: 1;
+    position: sticky;
+    top: 20px;
+    border: 2px solid #ccc;
+    background-color: black; /* Black fallback for empty image area */
     overflow: hidden;
-    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #newsCanvas {
@@ -27,45 +36,51 @@ body {
 }
 
 .controls-container {
-    background: #2d2d2d;
-    padding: 20px;
+    flex: 1;
+    background-color: #ffffff;
+    padding: 30px;
     border-radius: 12px;
-    width: 100%;
-    max-width: 450px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 15px;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
-.input-group { display: flex; flex-direction: column; gap: 5px; }
-label { font-size: 13px; color: #bbb; }
-input, textarea, select {
+h2 { margin-top: 0; color: #333; }
+
+.input-group { display: flex; flex-direction: column; }
+label { font-size: 0.9em; color: #555; margin-bottom: 5px; }
+input[type="file"], input[type="text"], input[type="range"], textarea, select {
     padding: 10px;
-    background: #3d3d3d;
-    border: 1px solid #555;
-    color: #fff;
-    border-radius: 5px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
 }
+input[type="range"] { padding: 0; cursor: pointer; }
+textarea { resize: vertical; min-height: 80px; }
 
-.adjustment-grid, .color-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+.color-controls { display: flex; gap: 15px; }
+.color-pick input[type="color"] {
+    width: 50px; height: 40px; border: none; cursor: pointer;
 }
 
 .download-btn {
-    background: #e91e63;
-    color: #fff;
+    background-color: #4CAF50;
+    color: white;
     padding: 15px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-size: 1.1em;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 20px;
+    transition: background-color 0.3s;
 }
+.download-btn:hover { background-color: #45a049; }
 
-.download-btn:hover { background: #c2185b; }
-
-@media (max-width: 768px) {
-    .main-wrapper { flex-direction: column; align-items: center; }
+@media (max-width: 900px) {
+    .main-wrapper { flex-direction: column; }
+    .poster-container { position: relative; top: 0; margin-bottom: 20px; }
 }
