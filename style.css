@@ -1,0 +1,114 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.main-wrapper {
+    display: flex;
+    gap: 30px;
+    width: 100%;
+    max-width: 1300px;
+    margin: auto;
+}
+
+/* 1. Poster Area (Canvas Container) */
+.poster-container {
+    flex: 1;
+    position: sticky;
+    top: 20px;
+    border: 2px solid #ccc;
+    background-color: white;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#newsCanvas {
+    max-width: 100%;
+    max-height: 80vh; /* Keep it visible but not overwhelming */
+    object-fit: contain;
+}
+
+/* 2. Control Panel */
+.controls-container {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+h2 { margin-top: 0; color: #333; }
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+input[type="file"],
+input[type="text"],
+textarea,
+select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+}
+
+textarea { resize: vertical; min-height: 80px; }
+
+.color-controls {
+    display: flex;
+    gap: 15px;
+}
+.color-pick input[type="color"] {
+    width: 50px;
+    height: 40px;
+    border: none;
+    cursor: pointer;
+}
+
+.download-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.download-btn:hover { background-color: #45a049; }
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 900px) {
+    .main-wrapper {
+        flex-direction: column; /* Stack vertically on small screens */
+    }
+
+    .poster-container {
+        position: relative;
+        top: 0;
+        margin-bottom: 20px;
+    }
+      }
