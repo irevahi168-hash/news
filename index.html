@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story HTML Generator - Kabir</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Anek Bangla', sans-serif; background: #f0f2f5; }
+        pre { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; overflow-x: auto; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md">
+        <h1 class="text-2xl font-bold text-[#603813] mb-6 text-center">গল্পের HTML কোড জেনারেটর</h1>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block font-bold mb-1">গল্পের টাইটেল:</label>
+                <input id="storyTitle" type="text" placeholder="যেমন: অফিসের সেই দুপুর" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+            
+            <div>
+                <label class="block font-bold mb-1">গল্পের মূল অংশ:</label>
+                <textarea id="storyContent" rows="8" placeholder="পুরো গল্পটি এখানে পেস্ট করুন..." class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+            </div>
+
+            <button onclick="generateCode()" class="w-full bg-[#603813] text-white font-bold py-3 rounded-lg hover:bg-[#4a2c10] transition">কোড তৈরি করুন</button>
+        </div>
+
+        <div id="resultArea" class="mt-10 hidden">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="font-bold text-green-600">আপনার HTML কোড রেডি:</h2>
+                <button onclick="copyCode()" class="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700">Copy Code</button>
+            </div>
+            <pre id="outputCode"></pre>
+        </div>
+    </div>
+
+    <script>
+        function generateCode() {
+            const title = document.getElementById('storyTitle').value;
+            const content = document.getElementById('storyContent').value;
+            
+            if(!title || !content) {
+                alert("দয়া করে টাইটেল এবং গল্প দুইটাই দিন!");
+                return;
+            }
+
+            // প্যারাগ্রাফ ঠিক করার জন্য নিউ লাইন রিপ্লেস
+            const formattedContent = content.split('\n').map(p => `<p class="mb-4 leading-relaxed">${p.trim()}</p>`).join('\n            ');
+
+            const finalHtml = `<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title} - Bangla CHOTI golpo Panu golpo</title>
+    <script src="https://cdn.tailwindcss.com"><\/script>
+    <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Anek Bangla', sans-serif; background-color: #f9f5f0; line-height: 1.8; }
+        .content-area { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <nav class="bg-[#4a2c10] text-white p-4 sticky top-0 z-50 shadow-lg text-center font-bold">
+        <a href="index.html" class="text-xl">Bangla <span class="text-amber-400">Choti</span> Panu</a>
+    </nav>
+
+    <main class="container mx-auto py-10 px-4">
+        <div class="content-area">
+            <h1 class="text-3xl md:text-4xl font-bold text-[#603813] mb-6 border-b pb-4">${title}</h1>
+            
+            <div class="story-text text-lg text-gray-700">
+            ${formattedContent}
+            </div>
+
+            <div class="mt-10 pt-6 border-t text-center">
+                <a href="index.html" class="bg-[#603813] text-white px-8 py-3 rounded-full font-bold hover:bg-[#4a2c10] transition inline-block">আরো গল্প পড়ুন</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-[#1a1108] text-gray-400 py-8 px-4 text-center mt-10">
+        <p class="text-xs">Developed with ❤️ by Kabir</p>
+    </footer>
+
+</body>
+</html>`;
+
+            document.getElementById('outputCode').innerText = finalHtml;
+            document.getElementById('resultArea').classList.remove('hidden');
+        }
+
+        function copyCode() {
+            const code = document.getElementById('outputCode').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                alert("কোড কপি হয়েছে!");
+            });
+        }
+    </script>
+</body>
+</html>
+
