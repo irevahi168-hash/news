@@ -3,37 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Story HTML Generator - Kabir</title>
+    <title>Advanced Story HTML Generator - Kabir</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Anek Bangla', sans-serif; background: #f0f2f5; }
-        pre { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; overflow-x: auto; }
+        pre { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
+        label { font-weight: bold; color: #4a2c10; display: block; margin-top: 10px; }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
-    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md">
-        <h1 class="text-2xl font-bold text-[#603813] mb-6 text-center">গল্পের HTML কোড জেনারেটর</h1>
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md border-t-4 border-[#603813]">
+        <h1 class="text-2xl font-bold text-[#603813] mb-6 text-center underline">গল্পের HTML (Suggestion Link) জেনারেটর</h1>
         
-        <div class="space-y-4">
-            <div>
-                <label class="block font-bold mb-1">গল্পের টাইটেল:</label>
-                <input id="storyTitle" type="text" placeholder="যেমন: অফিসের সেই দুপুর" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+                <label>মূল গল্পের টাইটেল:</label>
+                <input id="storyTitle" type="text" placeholder="টাইটেল এখানে দিন" class="w-full p-2 border rounded shadow-sm">
             </div>
             
-            <div>
-                <label class="block font-bold mb-1">গল্পের মূল অংশ:</label>
-                <textarea id="storyContent" rows="8" placeholder="পুরো গল্পটি এখানে পেস্ট করুন..." class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+            <div class="md:col-span-2">
+                <label>গল্পের মূল অংশ:</label>
+                <textarea id="storyContent" rows="6" placeholder="পুরো গল্পটি পেস্ট করুন..." class="w-full p-2 border rounded shadow-sm"></textarea>
             </div>
 
-            <button onclick="generateCode()" class="w-full bg-[#603813] text-white font-bold py-3 rounded-lg hover:bg-[#4a2c10] transition">কোড তৈরি করুন</button>
+            <div class="border-t pt-4 md:col-span-2"><p class="text-amber-800 font-bold">নিচে সাজেস্টেড গল্পের তথ্য দিন:</p></div>
+            
+            <div>
+                <label>সাজেশন ১ (টাইটেল):</label>
+                <input id="sug1Title" type="text" placeholder="যেমন: নতুন মজার গল্প" class="w-full p-2 border rounded">
+                <label>সাজেশন ১ (লিংক):</label>
+                <input id="sug1Link" type="text" placeholder="story1.html" class="w-full p-2 border rounded text-blue-600">
+            </div>
+
+            <div>
+                <label>সাজেশন ২ (টাইটেল):</label>
+                <input id="sug2Title" type="text" placeholder="যেমন: রাতের কাহিনী" class="w-full p-2 border rounded">
+                <label>সাজেশন ২ (লিংক):</label>
+                <input id="sug2Link" type="text" placeholder="story2.html" class="w-full p-2 border rounded text-blue-600">
+            </div>
         </div>
+
+        <button onclick="generateCode()" class="w-full mt-6 bg-[#603813] text-white font-bold py-3 rounded-lg hover:bg-[#4a2c10] transition shadow-lg">কোড তৈরি করুন</button>
 
         <div id="resultArea" class="mt-10 hidden">
             <div class="flex justify-between items-center mb-2">
-                <h2 class="font-bold text-green-600">আপনার HTML কোড রেডি:</h2>
-                <button onclick="copyCode()" class="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700">Copy Code</button>
+                <h2 class="font-bold text-green-600">কোড রেডি:</h2>
+                <button onclick="copyCode()" class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">Copy</button>
             </div>
             <pre id="outputCode"></pre>
         </div>
@@ -43,51 +60,84 @@
         function generateCode() {
             const title = document.getElementById('storyTitle').value;
             const content = document.getElementById('storyContent').value;
-            
-            if(!title || !content) {
-                alert("দয়া করে টাইটেল এবং গল্প দুইটাই দিন!");
-                return;
-            }
+            const s1T = document.getElementById('sug1Title').value;
+            const s1L = document.getElementById('sug1Link').value;
+            const s2T = document.getElementById('sug2Title').value;
+            const s2L = document.getElementById('sug2Link').value;
 
-            // প্যারাগ্রাফ ঠিক করার জন্য নিউ লাইন রিপ্লেস
-            const formattedContent = content.split('\n').map(p => `<p class="mb-4 leading-relaxed">${p.trim()}</p>`).join('\n            ');
+            const formattedContent = content.split('\n').map(p => p.trim() ? `<p class="mb-4 text-justify">${p.trim()}</p>` : '').join('\n            ');
+
+            const adCode = `<div class="my-6 flex justify-center">
+    <script type="text/javascript">
+        atOptions = { 'key' : '5e1e647770544994278e05a287ff9727', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
+    <\/script>
+    <script type="text/javascript" src="https://www.highperformanceformat.com/5e1e647770544994278e05a287ff9727/invoke.js"><\/script>
+</div>`;
 
             const finalHtml = `<!DOCTYPE html>
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title} - Bangla CHOTI golpo Panu golpo</title>
+    <title>${title} - Bangla Choti Panu</title>
     <script src="https://cdn.tailwindcss.com"><\/script>
-    <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Anek Bangla', sans-serif; background-color: #f9f5f0; line-height: 1.8; }
-        .content-area { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        body { font-family: 'Anek Bangla', sans-serif; background-color: #f9f5f0; }
+        .main-card { max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body class="text-gray-800">
 
-    <nav class="bg-[#4a2c10] text-white p-4 sticky top-0 z-50 shadow-lg text-center font-bold">
-        <a href="index.html" class="text-xl">Bangla <span class="text-amber-400">Choti</span> Panu</a>
+    <nav class="bg-[#4a2c10] text-white p-4 sticky top-0 z-50 text-center font-bold shadow-md">
+        <a href="index.html" class="text-xl tracking-tighter">Bangla <span class="text-amber-400">Choti</span> Panu</a>
     </nav>
 
-    <main class="container mx-auto py-10 px-4">
-        <div class="content-area">
-            <h1 class="text-3xl md:text-4xl font-bold text-[#603813] mb-6 border-b pb-4">${title}</h1>
+    <main class="px-4">
+        <div class="main-card">
+            <h1 class="text-2xl md:text-3xl font-bold text-[#603813] mb-6 border-b-2 border-amber-100 pb-3 leading-tight tracking-tight">${title}</h1>
             
-            <div class="story-text text-lg text-gray-700">
-            ${formattedContent}
+            ${adCode}
+
+            <div class="text-lg leading-relaxed text-gray-700">
+                ${formattedContent}
             </div>
 
-            <div class="mt-10 pt-6 border-t text-center">
-                <a href="index.html" class="bg-[#603813] text-white px-8 py-3 rounded-full font-bold hover:bg-[#4a2c10] transition inline-block">আরো গল্প পড়ুন</a>
+            ${adCode}
+
+            <div class="mt-12 bg-amber-50 p-6 rounded-xl border border-amber-200 shadow-inner">
+                <h3 class="text-xl font-bold text-amber-900 mb-4 border-l-4 border-amber-600 pl-3">আরো পড়ুন আপনার জন্য:</h3>
+                
+                <div class="grid grid-cols-1 gap-4">
+                    <a href="${s1L}" class="block p-4 bg-white rounded-lg border border-amber-100 hover:border-amber-500 hover:shadow-md transition group">
+                        <span class="text-amber-600 font-bold block text-sm mb-1 uppercase">Recommended</span>
+                        <span class="text-lg font-bold text-gray-800 group-hover:text-amber-700 underline decoration-amber-200 decoration-2 underline-offset-4">
+                            ${s1T}
+                        </span>
+                    </a>
+
+                    <a href="${s2L}" class="block p-4 bg-white rounded-lg border border-amber-100 hover:border-amber-500 hover:shadow-md transition group">
+                        <span class="text-amber-600 font-bold block text-sm mb-1 uppercase">Trending</span>
+                        <span class="text-lg font-bold text-gray-800 group-hover:text-amber-700 underline decoration-amber-200 decoration-2 underline-offset-4">
+                            ${s2T}
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <a href="index.html" class="inline-block bg-[#603813] text-white px-10 py-3 rounded-full font-bold shadow-md hover:bg-black transition duration-300">
+                   <i class="fa-solid fa-house mr-2"></i> হোম পেজে ফিরে যান
+                </a>
             </div>
         </div>
     </main>
 
-    <footer class="bg-[#1a1108] text-gray-400 py-8 px-4 text-center mt-10">
-        <p class="text-xs">Developed with ❤️ by Kabir</p>
+    <footer class="bg-[#1a1108] text-gray-500 py-6 text-center text-xs mt-10">
+        <p>Developed with ❤️ by Kabir</p>
     </footer>
+
+    <script type="text/javascript" src="https://pl29118390.profitablecpmratenetwork.com/e2/69/59/e2695923dcff4d72dfb47330a2df3bc4.js"><\/script>
 
 </body>
 </html>`;
@@ -98,11 +148,8 @@
 
         function copyCode() {
             const code = document.getElementById('outputCode').innerText;
-            navigator.clipboard.writeText(code).then(() => {
-                alert("কোড কপি হয়েছে!");
-            });
+            navigator.clipboard.writeText(code).then(() => { alert("কোড কপি হয়েছে!"); });
         }
     </script>
 </body>
 </html>
-
